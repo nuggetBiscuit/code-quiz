@@ -7,6 +7,7 @@ function startQ(){
   // Show the question and choices elements
   document.getElementById("question").style.display = "block";
   document.getElementById("choices").style.display = "inline-block";
+  
 }
 
 function submitAnswer() {
@@ -62,6 +63,9 @@ const quiz = [
       score++;
     } else {
       timeLeft -= 10;
+      // Updates timer to reflect the subtracted time for wrong answers
+      timeElement.textContent = timeLeft;
+
     }
     currentQuestionIndex++;
     if (currentQuestionIndex === quiz.length) {
@@ -77,6 +81,14 @@ const quiz = [
     setInterval(updateTime, 1000);
   }
   
+  function updateTime() {
+    if (timeLeft > 0) {
+      timeLeft--;
+      timeElement.textContent = timeLeft;
+    } else {
+      endQuiz();
+    }
+  }
 
   function endQuiz() {
     quizContainer.style.display = 'none';
