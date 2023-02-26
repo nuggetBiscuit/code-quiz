@@ -10,10 +10,6 @@ function startQ(){
   
 }
 
-function submitAnswer() {
-  document.getElementById("submit").style.display = "block";
-  
-}
 
 const quiz = [
     {
@@ -78,8 +74,27 @@ const quiz = [
   function startQuiz() {
     quizContainer.style.display = 'block';
     showQuestion();
-    setInterval(updateTime, 1000);
+    
   }
+
+  function startQuiz() {
+    quizContainer.style.display = 'block';
+    showQuestion();
+    quizStarted = true;
+  }
+  
+  function submitAnswer() {
+    document.getElementById("submit").style.display = "block";
+    
+    // Start the timer if the quiz has started
+    if (quizStarted) {
+      setInterval(updateTime, 1000);
+    }
+  
+    quizStarted = true;
+  }
+  
+  let quizStarted = false;
   
   function updateTime() {
     if (timeLeft > 0) {
@@ -107,3 +122,5 @@ const quiz = [
   submitButton.addEventListener('click', handleAnswer);
   startQuiz();
   
+  startButton.addEventListener('click', startQuiz);
+  startButton.addEventListener('click', submitAnswer);
