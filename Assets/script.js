@@ -35,6 +35,7 @@ const quiz = [
   const choicesElement = document.getElementById('choices');
   const submitButton = document.getElementById('submit');
   const timeElement = document.getElementById('time');
+  const correctOrNot = document.getElementById('correctOrNot');
   let currentQuestionIndex = 0;
   let score = 0;
   let timeLeft = 60;
@@ -55,13 +56,17 @@ const quiz = [
   function handleAnswer() {
     const currentQuestion = quiz[currentQuestionIndex];
     const selectedAnswer = currentQuestion.choices.indexOf(this.textContent);
+    
     if (selectedAnswer === currentQuestion.answer) {
       score++;
+      // Shows previous questions answer was correct
+      correctOrNot.innerHTML = "Correct :()";
     } else {
       timeLeft -= 10;
       // Updates timer to reflect the subtracted time for wrong answers
       timeElement.textContent = timeLeft;
-
+      // Shows previous questions answer was incorrect
+      correctOrNot.innerHTML = "Incorrect :(";
     }
     currentQuestionIndex++;
     if (currentQuestionIndex === quiz.length) {
@@ -86,7 +91,7 @@ const quiz = [
   function submitAnswer() {
     document.getElementById("submit").style.display = "block";
     
-    // Start the timer if the quiz has started
+    // Starts the timer if the quiz has started
     if (quizStarted) {
       setInterval(updateTime, 1000);
     }
