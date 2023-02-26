@@ -10,10 +10,13 @@
 </head>
 <body>
   <div id="quiz-container">
-      <h1>Multiple Choice Quiz</h1>
-      <div id="question"></div>
-      <div id="choices"></div>
-      <button id="submit">Submit Answer</button>
+      <h1>Multiple Choice Coding Quiz</h1>
+      <h2 id="paraText">Try to answer the following coding question within the time limit. Each wrong answer is minus 10 seconds.</h2>
+      <button id="startButton" onclick="startQ()" >Start</button>
+      <div id="question" style="display: none;"></div>
+      <div id="choices" style="display: none;" onclick="submitAnswer()"></div>
+      
+      <button id="submit"  >Submit Answer</button>
       <div id="timer">Time Remaining: <span id="time"></span></div>
     </div>
     
