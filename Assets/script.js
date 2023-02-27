@@ -1,131 +1,181 @@
-function startQ(){
-  // Show the submit button and hide the start button
-  document.getElementById("submit").style.display = "block";
-  document.getElementById("startButton").style.display = "none";
-  document.getElementById("paraText").style.display = "none";
-  
-  // Show the question and choices elements
-  document.getElementById("question").style.display = "block";
-  document.getElementById("choices").style.display = "inline-block";
-  
-}
-
-
 const quiz = [
-    {
+  {
       question: "A loop that never ends is referred to as a(n)_________",
-      choices: ["A. while loop", "B. infinite loop", "C. recursive loop", "D. for loop"],
-      answer: 1
+      choices: [
+      "A. while loop", 
+      "B. infinite loop", 
+      "C. recursive loop", 
+      "D. for loop"
+  ],
+      answer: "B. infinite loop"
     },
     {
       question: "Finding and solving errors in the source code is called what?",
-      choices: ["A. desk checking", "B. testing", "C. debugging", "D. decoding"],
-      answer: 2
+      choices: [
+      "A. desk checking", 
+      "B. testing", 
+      "C. debugging", 
+      "D. decoding"
+  ],
+      answer: "C. debugging"
     },
-    {
+  {
       question: "What does HTML stand for?",
-      choices: ["A. HyperText and links Markup Language", "B. HighText Machine Language", "C. HyperText Markup Language", "D. none of these"],
-      answer: 2
-    }
-  ];
+      choices: [
+      "A. Hyperlinks and Text Markup Language",
+      "B. Hyper Text Markup Language",
+      "C. Home Tool Markup Language",
+      "D. None of the above"
+    ],
+      answer: "B. Hyper Text Markup Language"
+  },
+  {
+      question: "What does CSS stand for?",
+      choices: [
+      "A. Computer Style Sheets",
+      "B. Cascading Style Sheets",
+      "C. Colorful Style Sheets",
+      "D. None of the above"
+    ],
+      answer: "B. Cascading Style Sheets"
+  },
+  {
+      question: "What does JavaScript do?",
+      choices: [
+      "A. Allows the creation of dynamic websites",
+      "B. Allows the creation of static websites",
+      "C. Allows the creation of 3D graphics",
+      "D. None of the above"
+    ],
+      answer: "A. Allows the creation of dynamic websites"
+  },
+  {
+      question: "Arrays in JavaScript can be used to store?",
+      choices: [
+      "A. Numbers and strings",
+      "B. Other arrays",
+      "C. Booleans",
+      "D. All of the above"
+    ],
+      answer: "D. All of the above"
+  }
+];
 
+const quizContainer = document.getElementById("quiz");
+const resultContainer = document.getElementById("result");
+const highscoresContainer = document.getElementById("highscores");
+const startButton = document.getElementById("startButton");
+const timeElement = document.getElementById('time');
 
-  const quizContainer = document.getElementById('quiz-container');
-  const questionElement = document.getElementById('question');
-  const choicesElement = document.getElementById('choices');
-  const submitButton = document.getElementById('submit');
-  const timeElement = document.getElementById('time');
-  const correctOrNot = document.getElementById('correctOrNot');
-  let currentQuestionIndex = 0;
-  let score = 0;
-  let timeLeft = 60;
-  
-  function showQuestion() {
-    const currentQuestion = quiz[currentQuestionIndex];
-    questionElement.textContent = currentQuestion.question;
-    choicesElement.innerHTML = '';
-    for (let i = 0; i < currentQuestion.choices.length; i++) {
-      const choice = document.createElement('div');
-      choice.className = 'choice';
-      choice.textContent = currentQuestion.choices[i];
-      choice.addEventListener('click', handleAnswer);
-      choicesElement.appendChild(choice);
-    }
-  }
-  
-  function handleAnswer() {
-    const currentQuestion = quiz[currentQuestionIndex];
-    const selectedAnswer = currentQuestion.choices.indexOf(this.textContent);
-    
-    if (selectedAnswer === currentQuestion.answer) {
-      score++;
-      // Shows previous questions answer was correct
-      correctOrNot.innerHTML = "Correct :()";
-    } else {
-      timeLeft -= 10;
-      // Updates timer to reflect the subtracted time for wrong answers
-      timeElement.textContent = timeLeft;
-      // Shows previous questions answer was incorrect
-      correctOrNot.innerHTML = "Incorrect :(";
-    }
-    currentQuestionIndex++;
-    if (currentQuestionIndex === quiz.length) {
-      endQuiz();
-    } else {
-      showQuestion();
-    }
-  }
-  
-  function startQuiz() {
-    quizContainer.style.display = 'block';
-    showQuestion();
-    
-  }
+let currentQuestion = 0;
+let score = 0;
+let timeLeft = 60;
+let timer;
 
-  function startQuiz() {
-    quizContainer.style.display = 'block';
-    showQuestion();
-    quizStarted = true;
-  }
-  
-  function submitAnswer() {
-    document.getElementById("submit").style.display = "block";
-    
-    // Starts the timer if the quiz has started
-    if (quizStarted) {
-      setInterval(updateTime, 1000);
-    }
-  
-    quizStarted = true;
-  }
-  
-  let quizStarted = false;
-  
-  function updateTime() {
-    if (timeLeft > 0) {
-      timeLeft--;
-      timeElement.textContent = timeLeft;
-    } else {
+function startQuiz() {
+  // Starts the timer if the quiz has started
+  timer = setInterval(function() {
+    timeLeft--;
+    // Updates timer to page
+    timeElement.textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
       endQuiz();
     }
+  }, 1000);
+
+  quizContainer.innerHTML = generateQuestion();
+  // Hides the start button
+document.getElementById("startButton").style.display = "none";
+document.getElementById("paraText").style.display = "none";
+  // Event listener for answer buttons
+  quizContainer.addEventListener("click", function(event) {
+    if (event.target.nodeName === "BUTTON") {
+      checkAnswer(event.target.innerText);
+    }
+  });
+}
+
+function generateQuestion() {
+  const question = quiz[currentQuestion];
+  let questionHTML = `<p>${question.question}</p>`;
+
+  for (let i = 0; i < question.choices.length; i++) {
+    questionHTML += `<button>${question.choices[i]}</button>`;
   }
 
-  function endQuiz() {
-    quizContainer.style.display = 'none';
-    const name = prompt('Enter your name:');
-    // If there is a highScores value, it will parse it as a JSON object. Otherwise, it will output an empty array
-    const highScores = JSON.parse(localStorage.getItem('highScores')) || [];
-    highScores.push({ name, score });
-    highScores.sort((a, b) => b.score - a.score);
-    highScores.splice(5);
-    localStorage.setItem('highScores', JSON.stringify(highScores));
-    showHighScores();
-  }
-  
+  return questionHTML;
+}
 
-  
-  submitButton.addEventListener('click', handleAnswer);
-  startQuiz();
-  
-  startButton.addEventListener('click', startQuiz);
-  startButton.addEventListener('click', submitAnswer);
+function checkAnswer(answer) {
+  const question = quiz[currentQuestion];
+  if (answer === question.answer) {
+    score++;
+    // Shows previous questions answer was correct
+    resultContainer.innerHTML = `<p>Correct :()</p>`;
+  } 
+  else {
+    timeLeft -= 10;
+    // Shows previous questions answer was incorrect
+    resultContainer.innerHTML = `<p>Incorrect :(</p>`;
+}
+
+// Move to next question or end quiz if all questions have been answered
+currentQuestion++;
+if (currentQuestion < quiz.length) {
+  quizContainer.innerHTML = generateQuestion();
+} 
+else {
+  clearInterval(timer);
+  endQuiz();
+}
+}
+
+function endQuiz() {
+quizContainer.innerHTML = "";
+resultContainer.innerHTML = "";
+highscoresContainer.innerHTML = `
+  <p>Your score: ${score}</p>
+  <form>
+    <label for="initials">Enter your initials:</label>
+    <input type="text" id="initials" name="initials" maxlength="3">
+    <button type="submit">Submit</button>
+  </form>
+`;
+
+// Event listener for high scores form submission
+const highscoresForm = document.querySelector("form");
+highscoresForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+  const initialsInput = document.getElementById("initials");
+  const initials = initialsInput.value.toUpperCase();
+  saveHighscore(initials, score);
+});
+}
+
+function saveHighscore(initials, score) {
+// If there is a highScores value, it will parse it as a JSON object. Otherwise, it will output an empty array
+let highscores = JSON.parse(localStorage.getItem("highscores")) || [];
+highscores.push({ initials: initials, score: score });
+highscores.sort(function(a, b) {
+  return b.score - a.score;
+});
+localStorage.setItem("highscores", JSON.stringify(highscores));
+displayHighscores();
+}
+
+function displayHighscores() {
+let highscores = JSON.parse(localStorage.getItem("highscores")) || [];
+let highscoresHTML = "<ul>";
+for (let i = 0; i < highscores.length; i++) {
+  highscoresHTML += `<li>${highscores[i].initials} - ${highscores[i].score}</li>`;
+}
+highscoresHTML += "</ul>";
+highscoresContainer.innerHTML = highscoresHTML;
+}
+
+// Event listener for start button
+startButton.addEventListener("click", function() {
+startQuiz();
+});
+
